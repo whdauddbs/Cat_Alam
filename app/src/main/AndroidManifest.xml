@@ -10,22 +10,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".Register" />
-        <activity android:name=".MainPage" />
         <activity android:name=".LogoIntro">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".Menu"
-            android:label="@string/title_activity_menu"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".Cat_Menu"
-            android:label="@string/title_activity_cat__menu"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:name=".MainPage"
+            android:label="@string/title_activity_menu_navigation"
+            android:theme="@style/AppTheme" />
     </application>
 
 </manifest>

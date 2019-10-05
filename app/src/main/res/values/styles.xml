@@ -6,11 +6,9 @@
         <item name="colorPrimary">@color/colorwhite</item>
         <item name="colorPrimaryDark">@color/colorwhite</item>
         <item name="colorAccent">@color/colorwhite</item>
-        <item name = "windowActionBar">false</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
 
-        <item name = "windowNoTitle">true</item>
-
-        <!-- No Title Bar-->
     </style>
 
     <style name="FullscreenTheme" parent="AppTheme">
@@ -30,9 +28,22 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="AppTheme.AppBarOverlay" parent="AppTheme" />
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="TranslucentStatusBar" parent="@android:style/Theme.Holo.Light">
+        <item name="android:actionBarStyle">@style/TranslucentActionBar</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="TranslucentActionBar" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:background">@android:color/transparent</item>
+    </style>
 
 
 </resources>
