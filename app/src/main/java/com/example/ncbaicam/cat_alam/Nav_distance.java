@@ -7,12 +7,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class FirstFragment extends Fragment {
+public class Nav_distance extends Fragment {
     View v;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        v=inflater.inflate(R.layout.first_menu, container, false);
+        v=inflater.inflate(R.layout.nav_distance, container, false);
         return v;
     }
 }

@@ -8,6 +8,18 @@
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
+    <FrameLayout
+        android:id="@+id/content_fragment_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="0dp"
+            android:background="@drawable/heart" />
+    </FrameLayout>
+
     <include
         layout="@layout/app_bar_menu_navigation"
         android:layout_width="match_parent"
@@ -21,12 +33,5 @@
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_menu_navigation"
         app:menu="@menu/activity_menu_navigation_drawer" />
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="0dp"
-        android:background="@drawable/heart" />
-
 
 </android.support.v4.widget.DrawerLayout>

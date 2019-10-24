@@ -6,14 +6,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/size"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="246dp"
-        android:layout_marginBottom="247dp"
-        android:text="FirstMenu!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+    <android.support.v7.widget.LinearLayoutCompat
+        android:id="@+id/nav_change_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ffff"
+        android:text='좋아하는 사람 바꾸는 페이지'
+
         />
 </android.support.constraint.ConstraintLayout>
