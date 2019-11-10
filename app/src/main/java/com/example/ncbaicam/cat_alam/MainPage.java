@@ -10,11 +10,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.ncbaicam.cat_alam.Item.UserInfoItem;
@@ -24,21 +25,30 @@ import java.util.concurrent.TimeUnit;
 public class MainPage extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     UserInfoItem user;
-
+    TextView nav_username;
     UserLocation userLocation = new UserLocation(this);
-    //ActionBar ab = getSupportActionBar() ;
-    //툴바 문제있음
+    BackPressCloseHandler backPressCloseHandler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_navigation);
 
-        //user=(UserInfoItem)getIntent().getSerializableExtra("userInfoItem");
+        //넘어온 유저 객체 설정
+        user=(UserInfoItem)getIntent().getSerializableExtra("userInfoItem");
+        // 네비게이션 드로어
+        setNav();
+        //header에 유저 이름 설정
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        View headerView = navigationView.getHeaderView(0);
+        TextView navUsername = (TextView) headerView.findViewById(R.id.nav_username);
+        navUsername.setText(user.name);
+        //뒤로가기
+        backPressCloseHandler = new BackPressCloseHandler(this);
 
-        setNav(); // 네비게이션 드로어
+
         userLocation.setLocation(); // 위치얻기
-        //ab.setTitle("") ;
     }
+
 
     @Override
     protected void onPause() {
@@ -53,9 +63,9 @@ public class MainPage extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            //super.onBackPressed();
+            backPressCloseHandler.onBackPressed();
         }
-
 
 
     }
@@ -74,11 +84,6 @@ public class MainPage extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        //if (id == R.id.action_settings) {
-        //    return true;
-        //}
 
         return super.onOptionsItemSelected(item);
     }
@@ -105,6 +110,11 @@ public class MainPage extends AppCompatActivity
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+
+//유저 이름 설정
+        nav_username = findViewById(R.id.nav_username);
+        nav_username.setText(user.name);
+
         return true;
     }
     public void destroyFragment() {
@@ -114,22 +124,30 @@ public class MainPage extends AppCompatActivity
     public void setNav(){
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+
+
+        //actionBar.setDisplayHomeAsUpEnabled(true);//뒤로가기
+        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //setSupportActionBar(toolbar);
         //toolbar.getBackground().setAlpha(0);
         //getSupportActionBar().setDisplayShowTitleEnabled(false); // 타이틀 이름 안보이게
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        toggle.setDrawerIndicatorEnabled(false);
-        //toolbar.setNavigationIcon(R.drawable.menu);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
+        final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        //아이콘 클릭하면 네비 열림
+        ImageButton openbtn=findViewById(R.id.nav_open);
+        openbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                drawer.openDrawer(GravityCompat.START);
+            }
+        });
+        //네비바 열고 아이템 선택
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
     }
-
-
 
     public void setService(){
         Log.d("SetService", "백그라운드 동작");

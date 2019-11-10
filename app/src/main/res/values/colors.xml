@@ -3,6 +3,11 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
-    <color name="colorwhite">#fdc0c0</color>
+    <!--my color-->
+    <color name="colorwhite">#FFFFFF</color>
+    <color name="colorviolet">#ba7a8c</color>
+    <color name="colordryrose">#b75867</color>
+    <color name="colorgrey">#646161</color>
+    <color name="colordrypink">#c19f9f</color>
     <color name="black_overlay">#66000000</color>
 </resources>
