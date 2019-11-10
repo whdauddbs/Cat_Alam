@@ -76,8 +76,11 @@
             android:background="@color/colorwhite"
             android:text="Button"
             tools:layout_marginTop="30dp" />
-
-
+        <TextView
+            android:id="@+id/registertext"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text=""/>
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
