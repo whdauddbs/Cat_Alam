@@ -18,6 +18,7 @@
             android:layout_alignParentStart="true"
             android:layout_marginStart="0dp"
             android:background="@drawable/heart" />
+
     </FrameLayout>
 
     <include

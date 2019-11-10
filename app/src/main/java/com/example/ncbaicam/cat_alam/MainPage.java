@@ -15,9 +15,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 public class MainPage extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    UserInfoItem user;
+
     UserLocation userLocation = new UserLocation(this);
     //ActionBar ab = getSupportActionBar() ;
     //툴바 문제있음
@@ -25,6 +28,10 @@ public class MainPage extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_navigation);
+        TextView test1=findViewById(R.id.test1);
+
+        //user=(UserInfoItem)getIntent().getSerializableExtra("userInfoItem");
+
         setNav(); // 네비게이션 드로어
         userLocation.setLocation(); // 위치얻기
         //ab.setTitle("") ;

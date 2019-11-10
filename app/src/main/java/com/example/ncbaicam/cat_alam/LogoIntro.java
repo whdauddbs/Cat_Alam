@@ -20,26 +20,29 @@ public class LogoIntro extends AppCompatActivity {
     String y_pnumber;
     //유저 닉네임
     String u_id;
+    UserInfoItem userInfoItem;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_logo_intro);
         //회원가입 여부 확인
-        if (chkRegister()){//가입되어 있으면 -> 메인 페이지로
+        if (chkRegister()){//가입되어 있으면 -> user 객체랑 메인 페이지로
             Log.d("my_intro", "가입됨. 메인으로 ");
+            load();//읽어와서 객체에 저장
             Handler handler = new Handler();
             handler.postDelayed(new Runnable(){
                 @Override
                 public void run() {
+                    Log.d("my_intro",userInfoItem.name);
                     Intent intent = new Intent (getApplicationContext(), MainPage.class);
+                    intent.putExtra("userInfoItem", userInfoItem);
                     startActivity(intent); //다음화면으로 넘어감
                     finish();
                 }
             },1000); //3초 뒤에 Runner객체 실행하도록 함
         }
-        else {//안되어 있으면 -> user 객체랑 회원 가입 페이지로
+        else {//안되어 있으면 -> 회원 가입 페이지로
             Log.d("my_intro", "가입안됨. 회원가입으로");
-            load();//회원 정보 변수에 저장 !!!!!!!!!!!!!객체로 저장해서 보내야함.
             Handler handler = new Handler();
             handler.postDelayed(new Runnable(){
                 @Override
@@ -59,7 +62,7 @@ public class LogoIntro extends AppCompatActivity {
         //user name이 비어있을 경우 "null"반환
         String get=appData.getString("u_name", "null");
         if (get.equals("null")){
-            Log.d("my_intro", "가입됨. 메인으로 ");
+            Log.d("my_intro", "null임 ");
             Log.d("my_intro", get);
             return false;
         }
@@ -71,10 +74,22 @@ public class LogoIntro extends AppCompatActivity {
     private void load() {
         // SharedPreferences 객체.get타입( 저장된 이름, 기본값 )
         // 저장된 이름이 존재하지 않을 시 기본값
+        Log.d("my_intro","ㅇㅇ");
+
         u_name= appData.getString("u_name", "null");
         u_pnumber = appData.getString("u_pnumber", "null");
         y_pnumber=appData.getString("y_pnumber", "null");
         u_id=appData.getString("u_id", "null");
+        //정보 읽어와서 객체 생성
+        userInfoItem =
+                new UserInfoItem(
+                        u_pnumber,
+                        u_name,
+                        u_id,
+                        y_pnumber);
+        Log.d("my_intro",userInfoItem.name);
+
+
     }
 
 }
