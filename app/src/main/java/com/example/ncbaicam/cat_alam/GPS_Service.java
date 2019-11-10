@@ -1,20 +1,37 @@
 package com.example.ncbaicam.cat_alam;
 
-import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.job.JobInfo;
 import android.app.job.JobParameters;
+import android.app.job.JobScheduler;
 import android.app.job.JobService;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
+
+import com.example.ncbaicam.cat_alam.Item.ResponseBody;
+import com.example.ncbaicam.cat_alam.Item.UserInfoItem;
+import com.example.ncbaicam.cat_alam.Item.UserLocationItem;
+import com.example.ncbaicam.cat_alam.remote.RemoteService;
+import com.example.ncbaicam.cat_alam.remote.ServiceGenerator;
+
+import java.util.concurrent.TimeUnit;
+
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.http.POST;
 
 /*
     백그라운드에서 위치 저장을 위한 JobScheduler
  */
-public class GPS_Service extends JobService implements LocationListener {
-    private final Context mContext;
+public class GPS_Service extends JobService {
     int count = 0;
     boolean isGPSEnable = false;
     boolean isNetWorkEnable = false;
@@ -22,87 +39,28 @@ public class GPS_Service extends JobService implements LocationListener {
 
     Location location;
     double lat;
-    double lon;
+    double lng;
 
     private static final long MIN_DISTANCE_UPDATE = 0;
-    private static final long MIN_TIME_UPDATE = 1000 * 10 * 1;
+    private static final long MIN_TIME_UPDATE = 0;
 
     protected LocationManager locationManager;
 
-    public GPS_Service(Context mContext) {
-        this.mContext = mContext;
-    }
-
-    @SuppressLint("MissingPermission")
-    public Location getLocation() {
-        try {
-            locationManager = (LocationManager) mContext.getSystemService(LOCATION_SERVICE);
-
-            isGPSEnable = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-            isNetWorkEnable = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-
-            if (!isGPSEnable && !isNetWorkEnable) {
-            } else {
-                this.isGetLocation = true;
-                if (isNetWorkEnable) {
-                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_UPDATE, MIN_DISTANCE_UPDATE, this);
-                    if (locationManager != null) {
-                        location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                        if (location != null) {
-                            lat = location.getLatitude();
-                            lon = location.getLongitude();
-                            Log.d("Location", "longtitude=" + lon + ", latitude=" + lat);
-                        }
-                    }
-                }
-                if (isGPSEnable) {
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_UPDATE, MIN_DISTANCE_UPDATE, this);
-                    if (location == null) {
-
-                        if (locationManager != null) {
-                            location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                            if (location != null) {
-                                lat = location.getLatitude();
-                                lon = location.getLongitude();
-                                Log.d("Location", "longtitude=" + lon + ", latitude=" + lat);
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return location;
-    }
-
-    public double getLatitude() {
-        if (location != null)
-            lat = location.getLatitude();
-        return lat;
-    }
-
-    public double getLongitude() {
-        if (location != null)
-            lon = location.getLongitude();
-        return lon;
-    }
-
-    public boolean isGetLocation() {
-        return this.isGetLocation;
-    }
-
-    public void stopUsingGPS() {
-        if (locationManager != null)
-            locationManager.removeUpdates(GPS_Service.this);
-    }
-
     @Override
     public boolean onStartJob(JobParameters params) {
+        Log.d("Service", "onStartJob: Start");
         getLocation();
-        if (isGPSEnable || isNetWorkEnable) {
-            // DB에 저장
+        if(isGetLocation){
+            Log.d("Service", "lng" + lng);
+            Log.d("Service", "lat" + lat);
+            SharedPreferences appData = getSharedPreferences("Register", MODE_PRIVATE);
+            String u_pnumber = appData.getString("u_pnumber", "null");
+            UserLocationItem userLocationItem = new UserLocationItem(u_pnumber, lng, lat);
+            RemoteService remoteService = ServiceGenerator.createService(RemoteService.class);
+            Call<ResponseBody> call = remoteService.insertLocation(userLocationItem);
+            return true;
         }
+        Log.d("Service", "onStartJob: Fail");
         return false;
     }
 
@@ -111,39 +69,47 @@ public class GPS_Service extends JobService implements LocationListener {
         return false;
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
-        double latitude = 0.0;
-        double longitude = 0.0;
-
-        if(location.getProvider().equals(LocationManager.GPS_PROVIDER)) {
-            latitude = location.getLatitude();
-            longitude = location.getLongitude();
-            Log.d("Location_Service" + " GPS : ", Double.toString(latitude )+ '/' + Double.toString(longitude));
+    final LocationListener locationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(Location location) {
+            lng = location.getLongitude();
+            lat = location.getLatitude();
+            isGetLocation = true;
         }
 
-        if(location.getProvider().equals(LocationManager.NETWORK_PROVIDER)) {
-            latitude = location.getLatitude();
-            longitude = location.getLongitude();
-            Log.d("Location_Service" + " NETWORK : ", Double.toString(latitude )+ '/' + Double.toString(longitude));
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
         }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+
+        }
+    };
+
+    public void getLocation() {
+        locationManager = (LocationManager) this.getSystemService(this.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            //권한이 없을 경우 최초 권한 요청 또는 사용자에 의한 재요청 확인
+            return;
+        }
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_DISTANCE_UPDATE, MIN_TIME_UPDATE, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_DISTANCE_UPDATE, MIN_TIME_UPDATE, locationListener);
     }
 
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-//        Toast toast = Toast.makeText(mContext, "2", Toast.LENGTH_SHORT);
-//        toast.show();
+    public void setService(){
+        JobScheduler jobScheduler =(JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        jobScheduler.schedule(new JobInfo.Builder(0, new ComponentName(this, GPS_Service.class))
+                .setMinimumLatency(TimeUnit.MINUTES.toMillis(1)) // 시간 바꿔야함
+                .setOverrideDeadline(TimeUnit.MINUTES.toMillis(3))
+                .build());
     }
 
-    @Override
-    public void onProviderEnabled(String provider) {
-//        Toast toast = Toast.makeText(mContext, "3", Toast.LENGTH_LONG);
-//        toast.show();
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-//        Toast toast = Toast.makeText(mContext, "4", Toast.LENGTH_LONG);
-//        toast.show();
-    }
 }

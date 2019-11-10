@@ -17,6 +17,10 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.example.ncbaicam.cat_alam.Item.UserInfoItem;
+
+import java.util.concurrent.TimeUnit;
+
 public class MainPage extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     UserInfoItem user;
@@ -28,7 +32,6 @@ public class MainPage extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_navigation);
-        TextView test1=findViewById(R.id.test1);
 
         //user=(UserInfoItem)getIntent().getSerializableExtra("userInfoItem");
 
@@ -40,7 +43,7 @@ public class MainPage extends AppCompatActivity
     @Override
     protected void onPause() {
         super.onPause();
-        //setService(); // 꺼졌을때 위치 서비스 등록
+        setService(); // 꺼졌을때 위치 서비스 등록
     }
 
     @Override
@@ -129,8 +132,12 @@ public class MainPage extends AppCompatActivity
 
 
     public void setService(){
+        Log.d("SetService", "백그라운드 동작");
         JobScheduler jobScheduler =(JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        jobScheduler.schedule(new JobInfo.Builder(1234, new ComponentName(this, GPS_Service.class)).setPeriodic(10000).build()); // 시간 바꿔야함
+        jobScheduler.schedule(new JobInfo.Builder(0, new ComponentName(this, GPS_Service.class))
+                .setMinimumLatency(TimeUnit.SECONDS.toSeconds(5)) // 시간 바꿔야함
+                .setOverrideDeadline(TimeUnit.MINUTES.toMillis(3))
+                .build());
 
     }
 }

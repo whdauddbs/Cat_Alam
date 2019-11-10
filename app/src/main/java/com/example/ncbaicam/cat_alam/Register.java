@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.ncbaicam.cat_alam.Item.UserInfoItem;
 import com.example.ncbaicam.cat_alam.remote.RemoteService;
 import com.example.ncbaicam.cat_alam.remote.ServiceGenerator;
 

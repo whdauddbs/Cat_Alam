@@ -6,9 +6,8 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
+
+import com.example.ncbaicam.cat_alam.Item.UserInfoItem;
 
 public class LogoIntro extends AppCompatActivity {
     SharedPreferences appData;
