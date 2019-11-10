@@ -11,9 +11,19 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.ncbaicam.cat_alam.remote.RemoteService;
+import com.example.ncbaicam.cat_alam.remote.ServiceGenerator;
+
+import java.io.Serializable;
 import java.util.regex.Pattern;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class Register extends AppCompatActivity {
+
+    UserInfoItem userInfoItem;
 
     //내용 체크용 변수
     Boolean flag1= false, flag2= false, flag3= false, flag4 = false;
@@ -22,14 +32,8 @@ public class Register extends AppCompatActivity {
     Button button;
     //정보 입력 에러 안내 뷰
     TextView registertext;
-    //유저 이름
-    EditText u_name;
-    //유저 핸드폰 번호
-    EditText u_pnumber;
-    //상대 핸드폰 번호
-    EditText y_pnumber;
-    //유저 닉네임
-    EditText u_id;
+    //유저 이름, 핸드폰 번호, 닉네임, 상대 핸드폰 번호
+    EditText u_name, u_pnumber, y_pnumber, u_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +62,9 @@ public class Register extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                saveDB();
                 Intent intent=new Intent(getApplicationContext(), MainPage.class);
+                intent.putExtra("userInfoItem", userInfoItem);
                 startActivity(intent);
             }
         });
@@ -175,6 +181,40 @@ public class Register extends AppCompatActivity {
             Log.d("my_register", "flag1,2,3,4");
             Log.d("my_register", flag1.toString() + flag2.toString() + flag3.toString() + flag4.toString());
         }
+    }
+
+    public void saveDB(){
+        final UserInfoItem newItem = new UserInfoItem(u_pnumber.toString(), u_name.toString(), u_id.toString(), y_pnumber.toString());
+
+        RemoteService remoteService = ServiceGenerator.createService(RemoteService.class);
+
+        Call<String> call = remoteService.insertUserInfo(newItem);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if(response.isSuccessful()){
+                    String seq = response.body();
+                    try{
+                        if(seq == ""){
+                            Log.d("saveDB", "regester Fail");
+                            return;
+                        }
+                    } catch (Exception e){
+                        Log.d("saveDB", "regester Fail");
+                        return;
+                    }
+                    userInfoItem.phone = newItem.phone;
+                    userInfoItem.name = newItem.name;
+                    userInfoItem.nickname = newItem.nickname;
+                    userInfoItem.youPhone = newItem.youPhone;
+                }
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+
+            }
+        });
     }
 
     }

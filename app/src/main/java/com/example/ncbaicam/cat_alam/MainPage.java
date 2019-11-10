@@ -33,7 +33,7 @@ public class MainPage extends AppCompatActivity
     @Override
     protected void onPause() {
         super.onPause();
-        setService(); // 꺼졌을때 위치 서비스 등록
+        //setService(); // 꺼졌을때 위치 서비스 등록
     }
 
     @Override
