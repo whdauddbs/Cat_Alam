@@ -68,9 +68,9 @@ public class Register extends AppCompatActivity {
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-            if ( u_name.getText().toString().length() == 0 ||
-                    !Pattern.matches("/^[가-힣]{2,4}$/", (CharSequence) u_name.getText().toString())) {
-                Log.d("my_register","유저 이름 에러");
+            if ( s.toString().length() == 0 ||
+                    !Pattern.matches("^[가-힣]{2,4}$", s)) {
+                Log.d("my_register", s.toString());
                 registertext.setText("유저 이름을 확인하세요");
                 flag1=false;
             }
@@ -78,7 +78,7 @@ public class Register extends AppCompatActivity {
                 flag1 = true;
                 registertext.setText("");
             }
-
+            Log.d("my_register",flag1.toString());
         }
 
         @Override
@@ -86,23 +86,17 @@ public class Register extends AppCompatActivity {
         }
         @Override
         public void afterTextChanged(Editable s) {
-            //입력 내용 검증
-            if(flag1 && flag2 && flag4 && flag3) {
-                button.setEnabled(true);
-            }else {
-                Log.d("my_register","다시 입력.");
-                Log.d("my_register",flag1.toString());
-
-            }
+            chkFlag();
         }
     };
     TextWatcher textWatcher_u_pnum= new TextWatcher() {
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-            if ( u_pnumber.getText().toString().length() == 0 ||
-                    !Pattern.matches("^01(?:0|1|[6-9]) - (?:\\d{3}|\\d{4}) - \\d{4}$", (CharSequence) u_pnumber.getText().toString())) {
+            if ( s.length() == 0 ||
+                    !Pattern.matches("^01(?:0|1|[6-9])(?:\\d{3}|\\d{4})\\d{4}$",s)) {
                 Log.d("my_register","유저 폰번호 에러");
+                Log.d("my_register",s.toString());
                 registertext.setText("유저 폰번호를 확인하세요.");
                 flag2=false;
 
@@ -120,20 +114,16 @@ public class Register extends AppCompatActivity {
         }
         @Override
         public void afterTextChanged(Editable s) {
-            //입력 내용 검증
-            if(flag1 && flag2 && flag4 && flag3) {
-                button.setEnabled(true);
-            }else {
-                Log.d("my_register","다시 입력.");
-            }
+            chkFlag();
         }
     };
     TextWatcher textWatcher_y_pnum= new TextWatcher() {
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if ( y_pnumber.getText().toString().length() == 0 ||
-                    !Pattern.matches("^01(?:0|1|[6-9]) - (?:\\d{3}|\\d{4}) - \\d{4}$", (CharSequence) y_pnumber.getText().toString())) {
+            if ( s.length() == 0 ||
+                    !Pattern.matches("^01(?:0|1|[6-9])(?:\\d{3}|\\d{4})\\d{4}$", s)) {
                 Log.d("my_register","상대 폰번호 에러");
+                Log.d("my_register",s.toString());
                 registertext.setText("좋아하는 사람의 폰번호를 확인하세요.");
                 flag3=false;
 
@@ -151,26 +141,19 @@ public class Register extends AppCompatActivity {
         }
         @Override
         public void afterTextChanged(Editable s) {
-            //입력 내용 검증
-            if(flag1 && flag2 && flag4 && flag3) {
-                button.setEnabled(true);
-            }else {
-                Log.d("my_register","다시 입력.");
-            }
+            chkFlag();
         }
     };
     TextWatcher textWatcher_u_id= new TextWatcher() {
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if ( u_id.getText().toString().length() == 0 ||
-                    !Pattern.matches("/^[가-힣]{2,4}|[a-zA-Z]{2,10}\\s[a-zA-Z]{2,10}$/", (CharSequence) u_id.getText().toString())) {
-                Log.d("my_register","유저 닉네임 에러");
+            if (s.length() == 0 ||s.length() > 10 ) {
+                Log.d("my_register", "유저 닉네임 에러");
                 registertext.setText("유저 닉네임을 확인하세요.");
-                flag4=false;
+                flag4 = false;
 
-            }
-            else{
-                flag4=true;
+            } else {
+                flag4 = true;
                 registertext.setText("");
             }
 
@@ -179,15 +162,19 @@ public class Register extends AppCompatActivity {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
         }
+
         @Override
         public void afterTextChanged(Editable s) {
-            //입력 내용 검증
-            if(flag1 && flag2 && flag4 && flag3) {
-                button.setEnabled(true);
-            }else {
-                Log.d("my_register","다시 입력.");
-            }
+            chkFlag();
+        }};
+    public void chkFlag(){
+        //입력 내용 검증
+        if (flag1 && flag2 && flag4 && flag3) {
+            button.setEnabled(true);
+        } else {
+            Log.d("my_register", "flag1,2,3,4");
+            Log.d("my_register", flag1.toString() + flag2.toString() + flag3.toString() + flag4.toString());
         }
-    };
+    }
 
     }
