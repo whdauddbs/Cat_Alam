@@ -76,8 +76,6 @@ public class Register extends AppCompatActivity {
 
             if ( s.toString().length() == 0 ||
                     !Pattern.matches("^[가-힣]{2,4}$", s)) {
-                Log.d("my_register", s.toString());
-                registertext.setText("유저 이름을 확인하세요");
                 flag1=false;
             }
             else {
@@ -101,8 +99,6 @@ public class Register extends AppCompatActivity {
 
             if ( s.length() == 0 ||
                     !Pattern.matches("^01(?:0|1|[6-9])(?:\\d{3}|\\d{4})\\d{4}$",s)) {
-                Log.d("my_register","유저 폰번호 에러");
-                Log.d("my_register",s.toString());
                 registertext.setText("유저 폰번호를 확인하세요.");
                 flag2=false;
 
@@ -128,8 +124,6 @@ public class Register extends AppCompatActivity {
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             if ( s.length() == 0 ||
                     !Pattern.matches("^01(?:0|1|[6-9])(?:\\d{3}|\\d{4})\\d{4}$", s)) {
-                Log.d("my_register","상대 폰번호 에러");
-                Log.d("my_register",s.toString());
                 registertext.setText("좋아하는 사람의 폰번호를 확인하세요.");
                 flag3=false;
 
@@ -154,7 +148,6 @@ public class Register extends AppCompatActivity {
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             if (s.length() == 0 ||s.length() > 10 ) {
-                Log.d("my_register", "유저 닉네임 에러");
                 registertext.setText("유저 닉네임을 확인하세요.");
                 flag4 = false;
 
@@ -177,14 +170,11 @@ public class Register extends AppCompatActivity {
         //입력 내용 검증
         if (flag1 && flag2 && flag4 && flag3) {
             button.setEnabled(true);
-        } else {
-            Log.d("my_register", "flag1,2,3,4");
-            Log.d("my_register", flag1.toString() + flag2.toString() + flag3.toString() + flag4.toString());
         }
     }
 
     public void saveDB(){
-        final UserInfoItem newItem = new UserInfoItem(u_pnumber.toString(), u_name.toString(), u_id.toString(), y_pnumber.toString());
+        final UserInfoItem newItem = new UserInfoItem(u_pnumber.getText().toString(), u_name.getText().toString(), u_id.getText().toString(), y_pnumber.getText().toString());
 
         RemoteService remoteService = ServiceGenerator.createService(RemoteService.class);
 
