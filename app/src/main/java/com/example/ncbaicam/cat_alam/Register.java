@@ -1,6 +1,7 @@
 package com.example.ncbaicam.cat_alam;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -11,9 +12,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.ncbaicam.cat_alam.remote.RemoteService;
+import com.example.ncbaicam.cat_alam.remote.ServiceGenerator;
+
 import java.util.regex.Pattern;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class Register extends AppCompatActivity {
+    //user 정보 객체
+    UserInfoItem userInfoItem;
 
     //내용 체크용 변수
     Boolean flag1= false, flag2= false, flag3= false, flag4 = false;
