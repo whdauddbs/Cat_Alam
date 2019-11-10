@@ -1,6 +1,7 @@
 package com.example.ncbaicam.cat_alam;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -14,7 +15,6 @@ import android.widget.TextView;
 import java.util.regex.Pattern;
 
 public class Register extends AppCompatActivity {
-
     //내용 체크용 변수
     Boolean flag1= false, flag2= false, flag3= false, flag4 = false;
 
@@ -58,6 +58,9 @@ public class Register extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //유저 정보 저장
+                saveUserInfo();
+                //메인 화면으로
                 Intent intent=new Intent(getApplicationContext(), MainPage.class);
                 startActivity(intent);
             }
@@ -67,6 +70,7 @@ public class Register extends AppCompatActivity {
     TextWatcher textWatcher_u_name = new TextWatcher() {
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
+            chkFlag();
 
             if ( s.toString().length() == 0 ||
                     !Pattern.matches("^[가-힣]{2,4}$", s)) {
@@ -92,6 +96,7 @@ public class Register extends AppCompatActivity {
     TextWatcher textWatcher_u_pnum= new TextWatcher() {
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
+            chkFlag();
 
             if ( s.length() == 0 ||
                     !Pattern.matches("^01(?:0|1|[6-9])(?:\\d{3}|\\d{4})\\d{4}$",s)) {
@@ -120,6 +125,8 @@ public class Register extends AppCompatActivity {
     TextWatcher textWatcher_y_pnum= new TextWatcher() {
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
+            chkFlag();
+
             if ( s.length() == 0 ||
                     !Pattern.matches("^01(?:0|1|[6-9])(?:\\d{3}|\\d{4})\\d{4}$", s)) {
                 Log.d("my_register","상대 폰번호 에러");
@@ -147,7 +154,9 @@ public class Register extends AppCompatActivity {
     TextWatcher textWatcher_u_id= new TextWatcher() {
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if (s.length() == 0 ||s.length() > 10 ) {
+            chkFlag();
+
+            if (s.length() < 2 ||s.length() > 10 ) {
                 Log.d("my_register", "유저 닉네임 에러");
                 registertext.setText("유저 닉네임을 확인하세요.");
                 flag4 = false;
@@ -171,10 +180,29 @@ public class Register extends AppCompatActivity {
         //입력 내용 검증
         if (flag1 && flag2 && flag4 && flag3) {
             button.setEnabled(true);
+            registertext.setText("작성 완료!");
         } else {
+            button.setEnabled(false);
             Log.d("my_register", "flag1,2,3,4");
             Log.d("my_register", flag1.toString() + flag2.toString() + flag3.toString() + flag4.toString());
         }
     }
+    public void saveUserInfo(){
+        //SharedPreferences를 sFile이름, 기본모드로 설정
+        SharedPreferences sharedPreferences = getSharedPreferences("Register",MODE_PRIVATE);
 
+        //저장을 하기위해 editor를 이용하여 값을 저장시켜준다.
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        String u_name_save = u_name.getText().toString(); // 사용자가 입력한 저장할 데이터
+        editor.putString("u_name",u_name_save); // key, value를 이용하여 저장하는 형태
+        String u_pnumber_save = u_pnumber.getText().toString();
+        editor.putString("u_pnumber",u_pnumber_save);
+        String y_pnumber_save = y_pnumber.getText().toString();
+        editor.putString("y_pnumber",y_pnumber_save);
+        String u_id_save = u_id.getText().toString();
+        editor.putString("u_id",u_id_save);
+
+        //최종 커밋
+        editor.commit();
+    }
     }
