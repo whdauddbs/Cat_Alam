@@ -12,7 +12,6 @@ import android.util.Log;
 
 import java.util.List;
 
-import static android.support.v4.content.ContextCompat.getSystemService;
 
 public class UserLocation implements LocationListener {
     private Context mContext;

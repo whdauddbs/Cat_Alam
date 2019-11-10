@@ -7,17 +7,18 @@ import android.app.job.JobScheduler;
 import android.app.job.JobService;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
 import com.example.ncbaicam.cat_alam.Item.ResponseBody;
-import com.example.ncbaicam.cat_alam.Item.UserInfoItem;
 import com.example.ncbaicam.cat_alam.Item.UserLocationItem;
 import com.example.ncbaicam.cat_alam.remote.RemoteService;
 import com.example.ncbaicam.cat_alam.remote.ServiceGenerator;
@@ -25,8 +26,6 @@ import com.example.ncbaicam.cat_alam.remote.ServiceGenerator;
 import java.util.concurrent.TimeUnit;
 
 import retrofit2.Call;
-import retrofit2.Response;
-import retrofit2.http.POST;
 
 /*
     백그라운드에서 위치 저장을 위한 JobScheduler
@@ -47,21 +46,28 @@ public class GPS_Service extends JobService {
     protected LocationManager locationManager;
 
     @Override
-    public boolean onStartJob(JobParameters params) {
+    public boolean onStartJob(final JobParameters params) {
         Log.d("Service", "onStartJob: Start");
+        Handler handler = new Handler();
         getLocation();
-        if(isGetLocation){
-            Log.d("Service", "lng" + lng);
-            Log.d("Service", "lat" + lat);
-            SharedPreferences appData = getSharedPreferences("Register", MODE_PRIVATE);
-            String u_pnumber = appData.getString("u_pnumber", "null");
-            UserLocationItem userLocationItem = new UserLocationItem(u_pnumber, lng, lat);
-            RemoteService remoteService = ServiceGenerator.createService(RemoteService.class);
-            Call<ResponseBody> call = remoteService.insertLocation(userLocationItem);
-            return true;
-        }
+        handler.postDelayed(new Runnable(){
+            @Override
+            public void run() {
+                if(isGetLocation){
+                    Log.d("Service", "lng" + lng);
+                    Log.d("Service", "lat" + lat);
+                    SharedPreferences appData = getSharedPreferences("Register", MODE_PRIVATE);
+                    String u_pnumber = appData.getString("u_pnumber", "null");
+                    UserLocationItem userLocationItem = new UserLocationItem(u_pnumber, lng, lat);
+                    RemoteService remoteService = ServiceGenerator.createService(RemoteService.class);
+                    Call<ResponseBody> call = remoteService.insertLocation(userLocationItem);
+                }
+            }
+        },3000); //3초 뒤에 Runner객체 실행하도록 함
+
         Log.d("Service", "onStartJob: Fail");
         return false;
+
     }
 
     @Override

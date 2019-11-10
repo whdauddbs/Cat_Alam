@@ -4,6 +4,7 @@ import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -13,6 +14,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
@@ -53,7 +55,11 @@ public class MainPage extends AppCompatActivity
     @Override
     protected void onPause() {
         super.onPause();
-        setService(); // 꺼졌을때 위치 서비스 등록
+        //setService(); // 꺼졌을때 위치 서비스 등록
+        Intent intent = new Intent(
+                getApplicationContext(),//현재제어권자
+                LocationService.class); // 이동할 컴포넌트
+        startService(intent);
     }
 
     @Override
