@@ -23,4 +23,8 @@ public class Register extends AppCompatActivity {
         });
     }
 
+    private void save(){
+
+    }
+
 }
