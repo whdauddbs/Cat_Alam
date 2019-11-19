@@ -1,9 +1,5 @@
 package com.example.ncbaicam.cat_alam;
 
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -11,24 +7,26 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.example.ncbaicam.cat_alam.Background.LocationService;
+import com.example.ncbaicam.cat_alam.Background.UndeadService;
 import com.example.ncbaicam.cat_alam.Item.UserInfoItem;
-
-import java.util.concurrent.TimeUnit;
 
 public class MainPage extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     UserInfoItem user;
     TextView nav_username;
-    UserLocation userLocation = new UserLocation(this);
+    UserLocation userLocation;
     BackPressCloseHandler backPressCloseHandler;
-
+    Intent foregroundServiceIntent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,22 +41,32 @@ public class MainPage extends AppCompatActivity
         View headerView = navigationView.getHeaderView(0);
         TextView navUsername = (TextView) headerView.findViewById(R.id.nav_username);
         navUsername.setText(user.name);
-
         //뒤로가기
-        backPressCloseHandler=new BackPressCloseHandler(this);
+        backPressCloseHandler = new BackPressCloseHandler(this);
 
+        userLocation = new UserLocation(this, user.phone);
         userLocation.setLocation(); // 위치얻기
+        setService(); // 서비스 등록
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        userLocation.stopLocation();
+        if(foregroundServiceIntent != null){
+            stopService(foregroundServiceIntent);
+            foregroundServiceIntent = null;
+        }
+    }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        //setService(); // 꺼졌을때 위치 서비스 등록
+    protected void onResume() {
+        super.onResume();
+        Log.d("Service", "서비스 종료");
         Intent intent = new Intent(
                 getApplicationContext(),//현재제어권자
                 LocationService.class); // 이동할 컴포넌트
-        startService(intent);
+        stopService(intent);
     }
 
     @Override
@@ -96,21 +104,19 @@ public class MainPage extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-
         int id = item.getItemId();
         Fragment fragment = null;
 
         if (id == R.id.nav_change) {
-           fragment=new Nav_change();
+            fragment=new Nav_change();
             //ab.setTitle("좋아하는 사람 바꾸기") ;
-        } else if (id == R.id.nav_alarm) {
-            fragment=new Nav_alarm();
+        } else if (id == R.id.nav_meeting) {
+            fragment=new Nav_meeting();
             //ab.setTitle("나를 좋아하는 사람과 나의 최근 거리") ;
         } else if (id == R.id.nav_meeting) {
             fragment=new Nav_meeting();
             //ab.setTitle("나를 좋아하는 사람과 마지막으로 만난 날짜") ;
         }
-        backPressCloseHandler.setFragment(fragment);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.content_fragment_layout, fragment);
         ft.commit();
@@ -124,15 +130,25 @@ public class MainPage extends AppCompatActivity
 
         return true;
     }
+    public void destroyFragment() {
+
+    }
 
     public void setNav(){
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+
+
+        //actionBar.setDisplayHomeAsUpEnabled(true);//뒤로가기
         //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
-        //ActionBar actionBar = getSupportActionBar();
+        //toolbar.getBackground().setAlpha(0);
+        //getSupportActionBar().setDisplayShowTitleEnabled(false); // 타이틀 이름 안보이게
 
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         //아이콘 클릭하면 네비 열림
-        ImageButton openbtn=findViewById(R.id.open_heart);
+        ImageButton openbtn=findViewById(R.id.nav_open);
         openbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -146,16 +162,31 @@ public class MainPage extends AppCompatActivity
 
     }
 
-
-
     public void setService(){
+        /*
         Log.d("SetService", "백그라운드 동작");
         JobScheduler jobScheduler =(JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
         jobScheduler.schedule(new JobInfo.Builder(0, new ComponentName(this, GPS_Service.class))
                 .setMinimumLatency(TimeUnit.SECONDS.toSeconds(5)) // 시간 바꿔야함
                 .setOverrideDeadline(TimeUnit.MINUTES.toMillis(3))
                 .build());
-
+        */
+        /*
+        Log.d("Service", "서비스 시작");
+        Intent intent = new Intent(
+                getApplicationContext(),//현재제어권자
+                LocationService.class); // 이동할 컴포넌트
+        intent.putExtra("phone", user.phone);
+        startService(intent);
+        */
+                if(UndeadService.serviceIntent == null){
+            foregroundServiceIntent = new Intent(this, UndeadService.class);
+            startService(foregroundServiceIntent);
+            Log.d("Service", "setService: 서비스 시작");
+        }
+        else{
+            foregroundServiceIntent = UndeadService.serviceIntent;
+            Log.d("Service", "setService: 서비스 시작");
+        }
     }
-
 }
