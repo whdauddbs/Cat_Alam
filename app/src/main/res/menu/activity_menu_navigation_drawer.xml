@@ -8,11 +8,11 @@
             android:id="@+id/nav_change"
             android:title="좋아하는 사람 바꾸기" />
         <item
-            android:id="@+id/nav_distance"
-            android:title="나를 좋아하는 사람과 나의 최근거리" />
+            android:id="@+id/nav_alarm"
+            android:title="내가 좋아하는 사람의 알람을 몇번 울렸을까? " />
         <item
             android:id="@+id/nav_meeting"
-            android:title="나를 좋아하는 사람과 마지막으로 만난 날짜" />
+            android:title="나를 좋아하는 사람과 나는 얼마나 마주쳤을까?" />
     </group>
 
 </menu>
