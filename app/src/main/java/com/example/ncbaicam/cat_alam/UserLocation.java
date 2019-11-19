@@ -7,21 +7,34 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
+import com.example.ncbaicam.cat_alam.Item.ResponseBody;
+import com.example.ncbaicam.cat_alam.Item.UserInfoItem;
+import com.example.ncbaicam.cat_alam.Item.UserLocationItem;
+import com.example.ncbaicam.cat_alam.remote.RemoteService;
+import com.example.ncbaicam.cat_alam.remote.ServiceGenerator;
+
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.http.POST;
 
 
 public class UserLocation implements LocationListener {
     private Context mContext;
     LocationManager locationManager;
     private List<String> listProviders;
-    private static long MIN_DISTANCE_UPDATE = 0;
+    private static long MIN_DISTANCE_UPDATE = 100;
     private static long MIN_TIME_UPDATE = 1000 * 10 * 1;
+    private static String phoneNumber;
 
-    public UserLocation(Context context){
-        mContext = context;
+    public UserLocation(Context context, String phoneNumber){
+        mContext = context; this.phoneNumber = phoneNumber;
     }
     public void setLocation(){
 
@@ -79,7 +92,7 @@ public class UserLocation implements LocationListener {
         // 다음 갱신 시간 구하기
         double latitude = 0.0;
         double longitude = 0.0;
-
+        Log.d("Location" , "location Changed********");
         if(location.getProvider().equals(LocationManager.GPS_PROVIDER)) {
             latitude = location.getLatitude();
             longitude = location.getLongitude();
@@ -91,6 +104,8 @@ public class UserLocation implements LocationListener {
             longitude = location.getLongitude();
             Log.d("Location" + " NETWORK : ", Double.toString(latitude )+ '/' + Double.toString(longitude));
         }
+
+        saveDB(latitude, longitude); // DB에 위치 저장하고 상대거리 파악
 
     }
 
@@ -114,5 +129,46 @@ public class UserLocation implements LocationListener {
     @Override
     public void onProviderDisabled(String provider) {
 
+    }
+
+    public void saveDB(double lat, double lng){
+        final UserLocationItem newItem = new UserLocationItem(this.phoneNumber, lng, lat);
+
+        RemoteService remoteService = ServiceGenerator.createService(RemoteService.class);
+
+        Call<ResponseBody> call = remoteService.insertLocation(newItem);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if(response.isSuccessful()){
+                    double distance = response.body().distance * 1000;
+                    String status = response.body().status;
+                    try{
+                        if(status== "error"){
+                            Log.d("saveDB", "Save Fail");
+                            return;
+                        }
+                    } catch (Exception e){
+                        Log.d("saveDB", "Save Fail");
+                        return;
+                    }
+
+                    // 단위 : m
+                    if(distance > 3) {
+                        Vibrator vibrator = (Vibrator) mContext.getSystemService(mContext.VIBRATOR_SERVICE);
+                        vibrator.vibrate(1000);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
+    }
+    public void stopLocation(){
+        Log.d("Location", "액티비티 위치 갱신 정지");
+        locationManager.removeUpdates(this);
     }
 }

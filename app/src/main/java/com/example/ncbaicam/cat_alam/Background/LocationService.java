@@ -1,18 +1,29 @@
-package com.example.ncbaicam.cat_alam;
+package com.example.ncbaicam.cat_alam.Background;
 
 import android.Manifest;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Vibrator;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.example.ncbaicam.cat_alam.Item.ResponseBody;
+import com.example.ncbaicam.cat_alam.Item.UserLocationItem;
+import com.example.ncbaicam.cat_alam.remote.RemoteService;
+import com.example.ncbaicam.cat_alam.remote.ServiceGenerator;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LocationService extends Service {
     public static final String BROADCAST_ACTION = "Hello World";
@@ -20,6 +31,8 @@ public class LocationService extends Service {
     public LocationManager locationManager;
     public MyLocationListener listener;
     public Location previousBestLocation = null;
+    private SharedPreferences appData;
+    private String phone;
 
     Intent intent;
     int counter = 0;
@@ -27,6 +40,8 @@ public class LocationService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        appData = getSharedPreferences("Resgister", MODE_PRIVATE);
+        phone = appData.getString("u_pnumber", null);
         intent = new Intent(BROADCAST_ACTION);
     }
 
@@ -137,13 +152,14 @@ public class LocationService extends Service {
         {
             Log.i("**************************************", "Location changed");
             if(isBetterLocation(loc, previousBestLocation)) {
-                loc.getLatitude();
-                loc.getLongitude();
+                double lat = loc.getLatitude();
+                double lng = loc.getLongitude();
+                Log.i("Service", "Location : " + lat + "/" + lng);
+                saveDB(lat, lng);
                 intent.putExtra("Latitude", loc.getLatitude());
                 intent.putExtra("Longitude", loc.getLongitude());
                 intent.putExtra("Provider", loc.getProvider());
                 sendBroadcast(intent);
-
             }
         }
 
@@ -163,6 +179,40 @@ public class LocationService extends Service {
         {
 
         }
+    }
+    public void saveDB(double lat, double lng){
+        final UserLocationItem newItem = new UserLocationItem(this.phone, lng, lat);
 
+        RemoteService remoteService = ServiceGenerator.createService(RemoteService.class);
+
+        Call<ResponseBody> call = remoteService.insertLocation(newItem);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if(response.isSuccessful()){
+                    double distance = response.body().distance * 1000;
+                    String status = response.body().status;
+                    try{
+                        if(status== "error"){
+                            Log.d("saveDB", "Save Fail");
+                            return;
+                        }
+                    } catch (Exception e){
+                        Log.d("saveDB", "Save Fail");
+                        return;
+                    }
+
+                    // 단위 : m
+                    if(distance > 3) {
+                        // notification 띄우기
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
     }
 }
