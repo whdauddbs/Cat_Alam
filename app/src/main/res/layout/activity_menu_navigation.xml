@@ -11,13 +11,16 @@
     <FrameLayout
         android:id="@+id/content_fragment_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="0dp"
-            android:background="@drawable/main" />
+        android:layout_height="match_parent"
+        android:background="@color/colorwhite">
+
+        <ImageButton
+            android:id="@+id/open_heart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:src="@drawable/empty_heart_ori" />
 
     </FrameLayout>
 

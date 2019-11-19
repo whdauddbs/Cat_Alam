@@ -11,9 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,6 +28,7 @@ public class MainPage extends AppCompatActivity
     TextView nav_username;
     UserLocation userLocation = new UserLocation(this);
     BackPressCloseHandler backPressCloseHandler;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,9 +43,9 @@ public class MainPage extends AppCompatActivity
         View headerView = navigationView.getHeaderView(0);
         TextView navUsername = (TextView) headerView.findViewById(R.id.nav_username);
         navUsername.setText(user.name);
-        //뒤로가기
-        backPressCloseHandler = new BackPressCloseHandler(this);
 
+        //뒤로가기
+        backPressCloseHandler=new BackPressCloseHandler(this);
 
         userLocation.setLocation(); // 위치얻기
     }
@@ -97,19 +96,21 @@ public class MainPage extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+
         int id = item.getItemId();
         Fragment fragment = null;
 
         if (id == R.id.nav_change) {
            fragment=new Nav_change();
             //ab.setTitle("좋아하는 사람 바꾸기") ;
-        } else if (id == R.id.nav_distance) {
-            fragment=new Nav_distance();
+        } else if (id == R.id.nav_alarm) {
+            fragment=new Nav_alarm();
             //ab.setTitle("나를 좋아하는 사람과 나의 최근 거리") ;
         } else if (id == R.id.nav_meeting) {
             fragment=new Nav_meeting();
             //ab.setTitle("나를 좋아하는 사람과 마지막으로 만난 날짜") ;
         }
+        backPressCloseHandler.setFragment(fragment);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.content_fragment_layout, fragment);
         ft.commit();
@@ -123,25 +124,15 @@ public class MainPage extends AppCompatActivity
 
         return true;
     }
-    public void destroyFragment() {
-
-    }
 
     public void setNav(){
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-
-
-        //actionBar.setDisplayHomeAsUpEnabled(true);//뒤로가기
         //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
-        //toolbar.getBackground().setAlpha(0);
-        //getSupportActionBar().setDisplayShowTitleEnabled(false); // 타이틀 이름 안보이게
+        //ActionBar actionBar = getSupportActionBar();
 
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         //아이콘 클릭하면 네비 열림
-        ImageButton openbtn=findViewById(R.id.nav_open);
+        ImageButton openbtn=findViewById(R.id.open_heart);
         openbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -155,6 +146,8 @@ public class MainPage extends AppCompatActivity
 
     }
 
+
+
     public void setService(){
         Log.d("SetService", "백그라운드 동작");
         JobScheduler jobScheduler =(JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
@@ -164,4 +157,5 @@ public class MainPage extends AppCompatActivity
                 .build());
 
     }
+
 }

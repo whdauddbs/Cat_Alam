@@ -206,8 +206,6 @@ public class Register extends AppCompatActivity {
         editor.commit();
     }
 
-
-
     public void saveDB(){
         final UserInfoItem newItem = new UserInfoItem(u_pnumber.getText().toString(), u_name.getText().toString(), u_id.getText().toString(), y_pnumber.getText().toString());
 

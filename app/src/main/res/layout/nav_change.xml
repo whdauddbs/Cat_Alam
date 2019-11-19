@@ -5,13 +5,66 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <android.support.v7.widget.LinearLayoutCompat
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
         android:id="@+id/nav_change_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#ffff"
+        android:orientation="vertical"
+        android:gravity="center_horizontal|center_vertical"
         android:text='좋아하는 사람 바꾸는 페이지'
+        android:paddingBottom="40dp">
 
-        />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingTop="0dp"
+            android:paddingBottom="100dp"
+            android:text="좋아하는 사람 변경"
+            android:textAlignment="center"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="현재 좋아하는 사람 번호" />
+        <TextView
+            android:id="@+id/now_you_phone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="01000000000" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:paddingTop="50dp"
+            android:hint="좋아하는 사람 번호 입력"
+            android:textAlignment="center"
+            android:textColor="@color/colordrypink" />
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginRight="30dp"
+            android:background="@color/colordryrose"
+            android:text="완료"
+            android:textAlignment="center"
+            android:textColor="@color/colorwhite"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+</LinearLayout>
+
 </android.support.constraint.ConstraintLayout>

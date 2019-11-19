@@ -7,12 +7,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+
 public class Nav_meeting extends Fragment {
     View v;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         v=inflater.inflate(R.layout.nav_meeting, container, false);
+        //saveUserInfo();
+        //saveDB();
         return v;
     }
+
 }

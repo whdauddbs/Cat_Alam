@@ -21,6 +21,7 @@
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         android:text="asd"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textColor="@color/colorwhite"
         android:textSize="24sp" />
 
 
