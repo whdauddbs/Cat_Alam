@@ -5,6 +5,7 @@ import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -18,17 +19,28 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.example.ncbaicam.cat_alam.Background.GPS_Service;
+import com.example.ncbaicam.cat_alam.Background.LocationService;
 import com.example.ncbaicam.cat_alam.Item.UserInfoItem;
+import com.example.ncbaicam.cat_alam.remote.RemoteService;
+import com.example.ncbaicam.cat_alam.remote.ServiceGenerator;
 
 import java.util.concurrent.TimeUnit;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainPage extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
     UserInfoItem user;
     TextView nav_username;
-    UserLocation userLocation = new UserLocation(this);
+    UserLocation userLocation;
     BackPressCloseHandler backPressCloseHandler;
-
+    //프레그먼트에 넘겨줄 스트링
+    String mtime="";
+    String mlat="";
+    String mlng="";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,11 +55,11 @@ public class MainPage extends AppCompatActivity
         View headerView = navigationView.getHeaderView(0);
         TextView navUsername = (TextView) headerView.findViewById(R.id.nav_username);
         navUsername.setText(user.name);
-
         //뒤로가기
         backPressCloseHandler=new BackPressCloseHandler(this);
-
-        userLocation.setLocation(); // 위치얻기
+        //위치 얻기
+        userLocation = new UserLocation(this, user.phone);
+        userLocation.setLocation();
     }
 
 
@@ -72,22 +84,10 @@ public class MainPage extends AppCompatActivity
             backPressCloseHandler.onBackPressed();
         }
 
-
     }
 
-    /*
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        //
-        getMenuInflater().inflate(R.menu.activity_menu_navigation_drawer, menu);
-        return true;
-    }
-*/
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         return super.onOptionsItemSelected(item);
@@ -100,18 +100,29 @@ public class MainPage extends AppCompatActivity
         int id = item.getItemId();
         Fragment fragment = null;
 
-        if (id == R.id.nav_change) {
-           fragment=new Nav_change();
-            //ab.setTitle("좋아하는 사람 바꾸기") ;
-        } else if (id == R.id.nav_alarm) {
-            fragment=new Nav_alarm();
-            //ab.setTitle("나를 좋아하는 사람과 나의 최근 거리") ;
-        } else if (id == R.id.nav_meeting) {
-            fragment=new Nav_meeting();
-            //ab.setTitle("나를 좋아하는 사람과 마지막으로 만난 날짜") ;
-        }
         backPressCloseHandler.setFragment(fragment);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+
+
+        if (id == R.id.nav_change) {        //좋아하는 사람 바꾸기
+           fragment=new Nav_change();
+        } else if (id == R.id.nav_alarm) {  //"나를 좋아하는 사람과 나의 최근 거리"
+            fragment=new Nav_alarm();
+        } else if (id == R.id.nav_meeting) {//나를 좋아하는 사람과 마지막으로 만난 날짜
+            //여기서 스트링으로 보내주자.
+            fragment=new Nav_meeting();
+            //프레그먼트에 문자열 넘기는 함수
+            stringToMeet();
+            // TODO: 2019-11-22 그리드뷰 테스트
+            /*
+            ((Nav_meeting) fragment).stime=this.mtime;
+            ((Nav_meeting) fragment).slat=this.mlat;
+            ((Nav_meeting) fragment).slng=this.mlng;
+            */
+            ((Nav_meeting) fragment).stime="20190108;20190908;20201225;20190108;20190908;20201225;20190108;20190908;20201225;20190108;20190908;20201225;20190108;20190908;20201225;20190108;20190908;20201225;20190108;20190908;20201225;20190108;20190908;20201225";
+            ((Nav_meeting) fragment).slat="41.40338;2.17403;41.40338;41.40338;2.17403;41.40338;41.40338;2.17403;41.40338;41.40338;2.17403;41.40338;41.40338;2.17403;41.40338;41.40338;2.17403;41.40338;41.40338;2.17403;41.40338;41.40338;2.17403;41.40338";
+            ((Nav_meeting) fragment).slng="37.757687;128.873749;128.873749;41.40338;2.17403;41.40338;41.40338;2.17403;41.40338;41.40338;2.17403;41.40338;41.40338;2.17403;41.40338;41.40338;2.17403;41.40338;41.40338;2.17403;41.40338;41.40338;2.17403;41.40338";
+        }
         ft.replace(R.id.content_fragment_layout, fragment);
         ft.commit();
 
@@ -126,10 +137,6 @@ public class MainPage extends AppCompatActivity
     }
 
     public void setNav(){
-        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
-        //ActionBar actionBar = getSupportActionBar();
-
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         //아이콘 클릭하면 네비 열림
         ImageButton openbtn=findViewById(R.id.open_heart);
@@ -142,10 +149,16 @@ public class MainPage extends AppCompatActivity
         //네비바 열고 아이템 선택
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
+    }
+    //넘겨주는 용도 함수
+    public void stringToMeet(){
+        SharedPreferences sharedPreferences = getSharedPreferences("Meet", MODE_PRIVATE);
+        //기존 저장된 로그 가져옴.
+        this.mtime=sharedPreferences.getString("mtime", "");
+        this.mlat=sharedPreferences.getString("mlat", "");
+        this.mlng=sharedPreferences.getString("mlng", "");
 
     }
-
 
 
     public void setService(){

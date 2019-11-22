@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="15dp">
+
+    <ImageView
+        android:id="@+id/log_point"
+        android:layout_width="wrap_content"
+        android:layout_height="17dp"
+        android:layout_gravity="left"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="10dp"
+        android:src="@drawable/point" />
+
+    <TextView
+        android:id="@+id/log_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_toRightOf="@id/log_point"
+        android:text="text나와라"
+        android:textColor="@color/colorAccent"
+        android:textSize="13sp" />
+
+</RelativeLayout>

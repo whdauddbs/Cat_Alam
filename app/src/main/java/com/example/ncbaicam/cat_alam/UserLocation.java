@@ -2,6 +2,7 @@ package com.example.ncbaicam.cat_alam;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -17,12 +18,16 @@ import com.example.ncbaicam.cat_alam.Item.UserLocationItem;
 import com.example.ncbaicam.cat_alam.remote.RemoteService;
 import com.example.ncbaicam.cat_alam.remote.ServiceGenerator;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.http.POST;
+import java.util.Date;
+
+import static android.content.Context.MODE_PRIVATE;
 
 
 public class UserLocation implements LocationListener {
@@ -131,7 +136,7 @@ public class UserLocation implements LocationListener {
 
     }
 
-    public void saveDB(double lat, double lng){
+    public void saveDB(final double lat, final double lng){
         final UserLocationItem newItem = new UserLocationItem(this.phoneNumber, lng, lat);
 
         RemoteService remoteService = ServiceGenerator.createService(RemoteService.class);
@@ -154,7 +159,10 @@ public class UserLocation implements LocationListener {
                     }
 
                     // 단위 : m
-                    if(distance > 3) {
+                    //*****3m 안에 들어오면 알림*******
+                    if(distance < 3) {
+                        //정보 저장
+                        saveMeet(lat, lng);
                         Vibrator vibrator = (Vibrator) mContext.getSystemService(mContext.VIBRATOR_SERVICE);
                         vibrator.vibrate(1000);
                     }
@@ -171,4 +179,41 @@ public class UserLocation implements LocationListener {
         Log.d("Location", "액티비티 위치 갱신 정지");
         locationManager.removeUpdates(this);
     }
+
+    //알람 울렸을 때 meeting log 저장
+    public void saveMeet(double lat, double lng){
+        //SharedPreferences를 sFile이름, 기본모드로 설정
+        //기존 저장된 로그
+        String stime;
+        String slat;
+        String slng;
+
+        SharedPreferences sharedPreferences = mContext.getSharedPreferences("Meet", MODE_PRIVATE);
+        //기존 저장된 로그 가져옴.
+        stime=sharedPreferences.getString("mtime", "");
+        slat=sharedPreferences.getString("mlat", "");
+        slng=sharedPreferences.getString("mlng", "");
+
+        //기존 로그 + 새로운 알림 로그(m~) 추가
+        SimpleDateFormat format2 = new SimpleDateFormat ( "yyyy년 MM월dd일 HH시mm분");
+        Date time = new Date();
+        String ttime = format2.format(time);
+
+        stime=stime+";"+ttime;
+        slat=slat+";"+ Double.toString(lat);
+        slng=slng+";"+Double.toString(lng);
+
+        //저장을 하기위해 editor를 이용하여 값을 저장시켜준다.
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("mtime",stime); // key, value를 이용하여 저장하는 형태
+        editor.putString("mlat",slat);
+        editor.putString("mlng",slng);
+
+        //최종 커밋
+        editor.commit();
+    }
+
+    //상대 알람 울리게 했을 때,
+    // TODO: 2019-11-22 여기 백엔드랑 만들어야함. 
+
 }

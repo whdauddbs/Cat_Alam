@@ -13,23 +13,33 @@
         android:background="#ffff"
         android:gravity="center_vertical"
         android:orientation="vertical"
-        android:text='좋아하는 사람 바꾸는 페이지'>
+        >
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="76dp"
-            android:layout_gravity="center"
-            android:paddingTop="0dp"
-            android:paddingBottom="20dp"
-            android:text="우리가 마주쳤던 그 곳"
-            android:textAlignment="center"
-            android:textSize="30sp"
-            android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:paddingTop="20dp"
+            android:text="우리가 마주쳤던 그 곳"
+            android:textAlignment="center"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/imageView3"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            app:srcCompat="@drawable/tail" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingBottom="10dp"
             android:text="N : 위도      E : 경도" />
 
         <TextView
@@ -37,13 +47,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:paddingBottom="39dp"
             android:text="구글 맵에 위치를 검색해 보세요!"
             android:textAlignment="center" />
-        <ScrollView
+
+
+        <GridView
+            android:id="@+id/log_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:stretchMode="columnWidth"
+            android:numColumns="1" >
 
-        </ScrollView>
 
+        </GridView>
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
