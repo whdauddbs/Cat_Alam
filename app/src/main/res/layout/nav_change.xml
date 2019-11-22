@@ -41,6 +41,7 @@
             android:text="01000000000" />
 
         <EditText
+            android:id="@+id/change_pn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -52,7 +53,7 @@
             android:textColor="@color/colordrypink" />
 
         <Button
-            android:id="@+id/button2"
+            android:id="@+id/chane_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"

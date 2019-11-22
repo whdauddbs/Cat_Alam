@@ -17,11 +17,9 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.example.ncbaicam.cat_alam.Background.GPS_Service;
 import com.example.ncbaicam.cat_alam.Background.LocationService;
+import com.example.ncbaicam.cat_alam.Background.UndeadService;
 import com.example.ncbaicam.cat_alam.Item.UserInfoItem;
-
-import java.util.concurrent.TimeUnit;
 
 public class MainPage extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -35,6 +33,7 @@ public class MainPage extends AppCompatActivity
     String mtime="";
     String mlat="";
     String mlng="";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,12 +106,16 @@ public class MainPage extends AppCompatActivity
         backPressCloseHandler.setFragment(fragment);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
-
-        if (id == R.id.nav_change) {        //좋아하는 사람 바꾸기
+        //좋아하는 사람 바꾸기
+        if (id == R.id.nav_change) {
            fragment=new Nav_change();
-        } else if (id == R.id.nav_alarm) {  //"나를 좋아하는 사람과 나의 최근 거리"
+        }
+        //"나를 좋아하는 사람과 나의 최근 거리"
+        else if (id == R.id.nav_alarm) {
             fragment=new Nav_alarm();
-        } else if (id == R.id.nav_meeting) {//나를 좋아하는 사람과 마지막으로 만난 날짜
+        }
+        //나를 좋아하는 사람과 마지막으로 만난 날짜
+        else if (id == R.id.nav_meeting) {
             //여기서 스트링으로 보내주자.
             fragment=new Nav_meeting();
             //프레그먼트에 문자열 넘기는 함수
@@ -174,6 +177,7 @@ public class MainPage extends AppCompatActivity
         this.mlng=sharedPreferences.getString("mlng", "");
 
     }
+
 
 
 
