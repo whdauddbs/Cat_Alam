@@ -24,7 +24,7 @@
             android:layout_gravity="center"
             android:paddingTop="0dp"
             android:paddingBottom="100dp"
-            android:text="좋아하는 사람 변경"
+            android:text="좋아하는 사람 번호 바꾸기"
             android:textAlignment="center"
             android:textSize="30sp"
             android:textStyle="bold" />

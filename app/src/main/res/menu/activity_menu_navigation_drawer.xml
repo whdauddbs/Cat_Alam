@@ -5,14 +5,14 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_change"
-            android:title="좋아하는 사람 바꾸기" />
-        <item
             android:id="@+id/nav_alarm"
-            android:title="내가 좋아하는 사람의 알람을 몇번 울렸을까? " />
+            android:title="DDING-DONG" />
         <item
             android:id="@+id/nav_meeting"
-            android:title="나를 좋아하는 사람과 나는 얼마나 마주쳤을까?" />
+            android:title="SOMETHING" />
+        <item
+            android:id="@+id/nav_change"
+            android:title="CHANGE" />
     </group>
 
 </menu>

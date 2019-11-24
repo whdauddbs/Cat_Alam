@@ -144,17 +144,6 @@ public class MainPage extends AppCompatActivity
     }
 
     public void setNav(){
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-
-
-        //actionBar.setDisplayHomeAsUpEnabled(true);//뒤로가기
-        //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
-        //toolbar.getBackground().setAlpha(0);
-        //getSupportActionBar().setDisplayShowTitleEnabled(false); // 타이틀 이름 안보이게
-
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         //아이콘 클릭하면 네비 열림
         ImageButton openbtn=findViewById(R.id.open_heart);
