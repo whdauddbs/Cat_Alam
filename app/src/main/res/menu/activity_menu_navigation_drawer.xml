@@ -6,12 +6,15 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_alarm"
+            android:icon="@drawable/bell"
             android:title="DDING-DONG" />
         <item
             android:id="@+id/nav_meeting"
+            android:icon="@drawable/miniheart"
             android:title="SOMETHING" />
         <item
             android:id="@+id/nav_change"
+            android:icon="@drawable/change"
             android:title="CHANGE" />
     </group>
 

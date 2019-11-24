@@ -77,6 +77,7 @@ public class Register extends AppCompatActivity {
                 Intent intent=new Intent(getApplicationContext(), MainPage.class);
                 intent.putExtra("userInfoItem", userInfoItem);
                 startActivity(intent);
+                finish();
             }
         });
     }
@@ -94,7 +95,6 @@ public class Register extends AppCompatActivity {
                 flag1 = true;
                 registertext.setText("");
             }
-            Log.d("my_register",flag1.toString());
         }
 
         @Override
@@ -208,6 +208,7 @@ public class Register extends AppCompatActivity {
 
     public void saveDB(){
         final UserInfoItem newItem = new UserInfoItem(u_pnumber.getText().toString(), u_name.getText().toString(), u_id.getText().toString(), y_pnumber.getText().toString());
+        userInfoItem = newItem;
 
         RemoteService remoteService = ServiceGenerator.createService(RemoteService.class);
 
@@ -222,20 +223,17 @@ public class Register extends AppCompatActivity {
                             Log.d("saveDB", "regester Fail");
                             return;
                         }
-                    } catch (Exception e){
+                    } catch (Exception e) {
                         Log.d("saveDB", "regester Fail");
                         return;
                     }
-                    userInfoItem.phone = newItem.phone;
-                    userInfoItem.name = newItem.name;
-                    userInfoItem.nickname = newItem.nickname;
-                    userInfoItem.youPhone = newItem.youPhone;
+                    Log.d("my_register","userInfoItem 객체 생성");
                 }
             }
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-
+                Log.d("my_register","통신 실패");
             }
         });
     }

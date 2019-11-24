@@ -8,16 +8,15 @@
 
     <LinearLayout
         android:id="@+id/nav_meeting_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
         android:background="#ffff"
         android:gravity="center_vertical"
         android:orientation="vertical"
         >
 
-
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:paddingTop="20dp"
@@ -47,10 +46,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:paddingBottom="39dp"
-            android:text="구글 맵에 위치를 검색해 보세요!"
+            android:paddingBottom="25dp"
+            android:text="로그를 클릭해 보세요!"
             android:textAlignment="center" />
 
+        <WebView
+            android:id="@+id/LibWebview"
+            android:layout_width="394dp"
+            android:layout_height="253dp">
+
+        </WebView>
 
         <GridView
             android:id="@+id/log_list"
@@ -59,8 +64,6 @@
             android:layout_alignParentLeft="true"
             android:stretchMode="columnWidth"
             android:numColumns="1" >
-
-
         </GridView>
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

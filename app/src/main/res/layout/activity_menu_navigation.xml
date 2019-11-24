@@ -21,7 +21,6 @@
             android:background="@android:color/transparent"
             android:layout_gravity="center_vertical|center_horizontal"
             android:src="@drawable/empty_heart_ori" />
-
     </FrameLayout>
 
     <include

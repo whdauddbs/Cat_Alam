@@ -51,14 +51,7 @@ public class Nav_change extends Fragment {
                     saveChange_ypnum();
                     //뜨는 번호 바꾸고
                     now_you_phone.setText(showYpnum());
-                    //기존 알람 몇 번 울렸는지 변경
-                    // TODO: 2019-11-24 구현 완성 되면 주석 해제
-                    /*
-                    SharedPreferences sharedPreferences =getActivity().getSharedPreferences("Alarm", Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString("alarm ","0");
-                    editor.commit();
-                    */
+
                 }
             }
         });

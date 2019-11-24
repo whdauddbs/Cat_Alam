@@ -17,6 +17,7 @@ public class Nav_alarm extends Fragment {
     View v;
     ImageView alarm_img;
     TextView alarm;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
@@ -24,15 +25,16 @@ public class Nav_alarm extends Fragment {
         alarm=v.findViewById(R.id.alarm_txt);
         alarm_img=v.findViewById(R.id.alarm_img);
         // TODO: 2019-11-24 구현 완성 되면 주석 해제 
-        //showalarm();
+        showalarm();
         return v;
     }
 
     public void showalarm(){
-        //txt설정
+        //txt설정 - 변수로 받아오기
         SharedPreferences sharedPreferences =this.getActivity().getSharedPreferences("Alarm", Context.MODE_PRIVATE);
-        String salarm = sharedPreferences.getString("alarm","null");
+        String salarm = sharedPreferences.getString("alarm","0");
         alarm.setText("좋아하는 사람에게 "+salarm+"번 알람을 울렸습니다.");
+
 
         //이미지 설정
         int cnt_alarm = Integer.parseInt(String.valueOf(alarm.getText()));
