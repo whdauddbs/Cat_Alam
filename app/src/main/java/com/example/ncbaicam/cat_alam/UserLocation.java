@@ -37,6 +37,7 @@ public class UserLocation implements LocationListener {
     private static long MIN_DISTANCE_UPDATE = 100;
     private static long MIN_TIME_UPDATE = 1000 * 10 * 1;
     private static String phoneNumber;
+    private int ringing_cnt = 0;
 
     public UserLocation(Context context, String phoneNumber){
         mContext = context; this.phoneNumber = phoneNumber;
@@ -211,6 +212,10 @@ public class UserLocation implements LocationListener {
 
         //최종 커밋
         editor.commit();
+    }
+
+    public int getCount(){
+        return ringing_cnt;
     }
 
     //상대 알람 울리게 했을 때,

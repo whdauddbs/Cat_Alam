@@ -54,17 +54,14 @@ public class MainPage extends AppCompatActivity
 
         userLocation = new UserLocation(this, user.phone);
         userLocation.setLocation(); // 위치얻기
-        setService(); // 서비스 등록
+
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         userLocation.stopLocation();
-        if(foregroundServiceIntent != null){
-            stopService(foregroundServiceIntent);
-            foregroundServiceIntent = null;
-        }
+        setService();
     }
 
     @Override
@@ -103,7 +100,6 @@ public class MainPage extends AppCompatActivity
         int id = item.getItemId();
         Fragment fragment = null;
 
-        backPressCloseHandler.setFragment(fragment);
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
         //좋아하는 사람 바꾸기
@@ -113,6 +109,7 @@ public class MainPage extends AppCompatActivity
         //"나를 좋아하는 사람과 나의 최근 거리"
         else if (id == R.id.nav_alarm) {
             fragment=new Nav_alarm();
+            ((Nav_alarm) fragment).alarm_cnt = userLocation.getCount();
         }
         //나를 좋아하는 사람과 마지막으로 만난 날짜
         else if (id == R.id.nav_meeting) {
@@ -130,6 +127,7 @@ public class MainPage extends AppCompatActivity
             ((Nav_meeting) fragment).slat="41.40338;2.17403;41.40338;41.40338;2.17403;41.40338;41.40338;2.17403;41.40338;41.40338;2.17403;41.40338;41.40338;2.17403;41.40338;41.40338;2.17403;41.40338;41.40338;2.17403;41.40338;41.40338;2.17403;41.40338";
             ((Nav_meeting) fragment).slng="37.757687;128.873749;128.873749;41.40338;2.17403;41.40338;41.40338;2.17403;41.40338;41.40338;2.17403;41.40338;41.40338;2.17403;41.40338;41.40338;2.17403;41.40338;41.40338;2.17403;41.40338;41.40338;2.17403;41.40338";
         }
+        backPressCloseHandler.setFragment(fragment);
         ft.replace(R.id.content_fragment_layout, fragment);
         ft.commit();
 

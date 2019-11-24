@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.widget.Toast;
 
 import com.example.ncbaicam.cat_alam.MainPage;
 import com.example.ncbaicam.cat_alam.R;
@@ -27,6 +28,7 @@ public class UndeadService extends Service {
         initializeNotification();
         
         // 위치 저장 하기
+        // 거리가 가까워지면 알람울리기, 푸쉬알림
 
         
         return START_STICKY;

@@ -17,6 +17,8 @@ public class Nav_alarm extends Fragment {
     View v;
     ImageView alarm_img;
     TextView alarm;
+    public int alarm_cnt = 0;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){

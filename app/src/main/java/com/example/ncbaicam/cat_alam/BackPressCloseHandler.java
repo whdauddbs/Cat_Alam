@@ -19,12 +19,6 @@ public class BackPressCloseHandler {
 
     public void onBackPressed() {
         // TODO: 2019-11-22 제어권?이 엑티비티에 있음 뒤로가기 수정.
-        if(fragment != null) {
-            Log.d("backpress -F", String.valueOf(fragment));
-        }
-        if(activity!= null) {
-            Log.d("backpress -A", String.valueOf(activity));
-        }
 
         if(fragment != null) {
             FragmentTransaction FragTran = fragment.getFragmentManager().beginTransaction();
