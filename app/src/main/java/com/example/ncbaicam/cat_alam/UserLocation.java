@@ -34,7 +34,7 @@ public class UserLocation implements LocationListener {
     private Context mContext;
     LocationManager locationManager;
     private List<String> listProviders;
-    private static long MIN_DISTANCE_UPDATE = 100;
+    private static long MIN_DISTANCE_UPDATE = 1;
     private static long MIN_TIME_UPDATE = 1000 * 10 * 1;
     private static String phoneNumber;
     private int ringing_cnt = 0;
@@ -65,7 +65,7 @@ public class UserLocation implements LocationListener {
             Log.d("Location", "longtitude=" + lng + ", latitude=" + lat);
         }
         listProviders = locationManager.getAllProviders();
-        boolean[] isEnable = new boolean[3];
+        boolean[] isEnable = new boolean[2];
         Log.d("setLocation", "for 직전");
         for (int i = 0; i < listProviders.size(); i++) {
             if (listProviders.get(i).equals(LocationManager.GPS_PROVIDER)) {
@@ -76,17 +76,11 @@ public class UserLocation implements LocationListener {
                 isEnable[1] = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_UPDATE, MIN_DISTANCE_UPDATE, this);
-            } else if (listProviders.get(i).equals(LocationManager.PASSIVE_PROVIDER)) {
-                isEnable[2] = locationManager.isProviderEnabled(LocationManager.PASSIVE_PROVIDER);
-
-                locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, MIN_TIME_UPDATE, MIN_DISTANCE_UPDATE, this);
             }
-
         }
 
         Log.d("Location", listProviders.get(0) + '/' + String.valueOf(isEnable[0]));
         Log.d("Location", listProviders.get(1) + '/' + String.valueOf(isEnable[1]));
-        Log.d("Location", listProviders.get(2) + '/' + String.valueOf(isEnable[2]));
 
 
     }
@@ -102,17 +96,15 @@ public class UserLocation implements LocationListener {
         if(location.getProvider().equals(LocationManager.GPS_PROVIDER)) {
             latitude = location.getLatitude();
             longitude = location.getLongitude();
-            Log.d("Location" + " GPS : ", Double.toString(latitude )+ '/' + Double.toString(longitude));
+            Log.d("Location" + " GPS : ", Double.toString(latitude)+ '/' + Double.toString(longitude));
+            saveDB(latitude, longitude); // DB에 위치 저장하고 상대거리 파악
         }
-
-        if(location.getProvider().equals(LocationManager.NETWORK_PROVIDER)) {
+        else if(location.getProvider().equals(LocationManager.NETWORK_PROVIDER)) {
             latitude = location.getLatitude();
             longitude = location.getLongitude();
-            Log.d("Location" + " NETWORK : ", Double.toString(latitude )+ '/' + Double.toString(longitude));
+            Log.d("Location" + " NETWORK : ", Double.toString(latitude) + '/' + Double.toString(longitude));
+            saveDB(latitude, longitude); // DB에 위치 저장하고 상대거리 파악
         }
-
-        saveDB(latitude, longitude); // DB에 위치 저장하고 상대거리 파악
-
     }
 
     @Override
@@ -128,7 +120,6 @@ public class UserLocation implements LocationListener {
         }
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_UPDATE, MIN_DISTANCE_UPDATE, this);
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_UPDATE, MIN_DISTANCE_UPDATE, this);
-        locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, MIN_TIME_UPDATE, MIN_DISTANCE_UPDATE, this);
 
     }
 
@@ -158,7 +149,6 @@ public class UserLocation implements LocationListener {
                         Log.d("saveDB", "Save Fail");
                         return;
                     }
-
                     // 단위 : m
                     //*****3m 안에 들어오면 알림*******
                     if(distance < 3) {
@@ -167,6 +157,9 @@ public class UserLocation implements LocationListener {
                         Vibrator vibrator = (Vibrator) mContext.getSystemService(mContext.VIBRATOR_SERVICE);
                         vibrator.vibrate(1000);
                     }
+                }
+                else{
+                    Log.d("saveDB", "onResponse: db반환 실패");
                 }
             }
 
@@ -219,6 +212,7 @@ public class UserLocation implements LocationListener {
     }
 
     //상대 알람 울리게 했을 때,
-    // TODO: 2019-11-22 여기 백엔드랑 만들어야함. 
+    //
+    // TODO: 2019-11-22 여기 백엔드랑 만들어야함.
 
 }

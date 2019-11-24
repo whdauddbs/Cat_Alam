@@ -58,8 +58,8 @@ public class MainPage extends AppCompatActivity
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onStop() {
+        super.onStop();
         userLocation.stopLocation();
         setService();
     }
@@ -70,7 +70,7 @@ public class MainPage extends AppCompatActivity
         Log.d("Service", "서비스 종료");
         Intent intent = new Intent(
                 getApplicationContext(),//현재제어권자
-                LocationService.class); // 이동할 컴포넌트
+                UndeadService.class); // 이동할 컴포넌트
         stopService(intent);
     }
 
@@ -187,12 +187,13 @@ public class MainPage extends AppCompatActivity
         */
         if(UndeadService.serviceIntent == null){
             foregroundServiceIntent = new Intent(this, UndeadService.class);
+            foregroundServiceIntent.putExtra("phoneNum", user.phone);
             startService(foregroundServiceIntent);
-            Log.d("Service", "setService: 서비스 시작");
+            Log.d("Service", "setService: 서비스 시작1");
         }
         else{
             foregroundServiceIntent = UndeadService.serviceIntent;
-            Log.d("Service", "setService: 서비스 시작");
+            Log.d("Service", "setService: 서비스 시작2");
         }
     }
 }

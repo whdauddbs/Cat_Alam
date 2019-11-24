@@ -73,7 +73,6 @@ public class LogoIntro extends AppCompatActivity {
     private void load() {
         // SharedPreferences 객체.get타입( 저장된 이름, 기본값 )
         // 저장된 이름이 존재하지 않을 시 기본값
-        Log.d("my_intro","ㅇㅇ");
 
         u_name= appData.getString("u_name", "null");
         u_pnumber = appData.getString("u_pnumber", "null");

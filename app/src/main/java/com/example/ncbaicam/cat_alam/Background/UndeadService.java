@@ -12,22 +12,28 @@ import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import android.widget.Toast;
 
+import com.example.ncbaicam.cat_alam.LogoIntro;
 import com.example.ncbaicam.cat_alam.MainPage;
 import com.example.ncbaicam.cat_alam.R;
+import com.example.ncbaicam.cat_alam.UserLocation;
 
 import java.util.Calendar;
 
 public class UndeadService extends Service {
     public static Intent serviceIntent = null;
-
+    private  UserLocation userLocation;
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         serviceIntent = intent;
         initializeNotification();
         
         // 위치 저장 하기
+        Log.d("Service", "onStartCommand: 위치 저장 시작");
+        userLocation = new UserLocation(this, intent.getStringExtra("phoneNum"));
+        userLocation.setLocation();
         // 거리가 가까워지면 알람울리기, 푸쉬알림
 
         
@@ -52,7 +58,7 @@ public class UndeadService extends Service {
         builder.setWhen(0);
         builder.setShowWhen(false);
 
-        Intent notificationIntent = new Intent(this, MainPage.class);
+        Intent notificationIntent = new Intent(this, LogoIntro.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 , notificationIntent, 0);
         builder.setContentIntent(pendingIntent);
 
@@ -68,6 +74,8 @@ public class UndeadService extends Service {
     public void onDestroy() {
         super.onDestroy();
 
+        userLocation.stopLocation();
+        Log.d("Service", "onStartCommand: 위치 저장 꺼짐");
         final Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.add(Calendar.SECOND, 3);
@@ -82,6 +90,8 @@ public class UndeadService extends Service {
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
 
+        userLocation.stopLocation();
+        Log.d("Service", "onStartCommand: 위치 저장 꺼짐");
         final  Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.add(Calendar.SECOND, 3);
