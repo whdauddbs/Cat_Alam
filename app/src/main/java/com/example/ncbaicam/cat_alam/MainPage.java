@@ -10,14 +10,12 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.example.ncbaicam.cat_alam.Background.LocationService;
 import com.example.ncbaicam.cat_alam.Background.UndeadService;
 import com.example.ncbaicam.cat_alam.Item.UserInfoItem;
 
@@ -28,6 +26,8 @@ public class MainPage extends AppCompatActivity
     UserLocation userLocation;
     BackPressCloseHandler backPressCloseHandler;
     Intent foregroundServiceIntent;
+    ImageButton openbtn;
+    boolean isExit = false;
 
     //프레그먼트에 넘겨줄 스트링
     String mtime="";
@@ -52,7 +52,7 @@ public class MainPage extends AppCompatActivity
         //뒤로가기
         backPressCloseHandler = new BackPressCloseHandler(this);
 
-        userLocation = new UserLocation(this, user.phone);
+        userLocation = new UserLocation(this, user.phone, false);
         userLocation.setLocation(); // 위치얻기
 
     }
@@ -60,7 +60,8 @@ public class MainPage extends AppCompatActivity
     @Override
     protected void onStop() {
         super.onStop();
-        userLocation.stopLocation();
+        if(!isExit)
+            userLocation.stopLocation();
         setService();
     }
 
@@ -118,15 +119,21 @@ public class MainPage extends AppCompatActivity
             //프레그먼트에 문자열 넘기는 함수
             stringToMeet();
             // TODO: 2019-11-22 그리드뷰 테스트
-            /*
+
             ((Nav_meeting) fragment).stime=this.mtime;
             ((Nav_meeting) fragment).slat=this.mlat;
             ((Nav_meeting) fragment).slng=this.mlng;
-            */
+            /*
             ((Nav_meeting) fragment).stime="20190108;20190908;20201225;20190108;20190908;20201225;20190108;20190908;20201225;20190108;20190908;20201225;20190108;20190908;20201225;20190108;20190908;20201225;20190108;20190908;20201225;20190108;20190908;20201225";
             ((Nav_meeting) fragment).slat="41.40338;2.17403;41.40338;41.40338;2.17403;41.40338;41.40338;2.17403;41.40338;41.40338;2.17403;41.40338;41.40338;2.17403;41.40338;41.40338;2.17403;41.40338;41.40338;2.17403;41.40338;41.40338;2.17403;41.40338";
             ((Nav_meeting) fragment).slng="37.757687;128.873749;128.873749;41.40338;2.17403;41.40338;41.40338;2.17403;41.40338;41.40338;2.17403;41.40338;41.40338;2.17403;41.40338;41.40338;2.17403;41.40338;41.40338;2.17403;41.40338;41.40338;2.17403;41.40338";
+        */
         }
+        else if (id == R.id.exit){
+            isExit = true;
+            onDestroy();
+        }
+
         backPressCloseHandler.setFragment(fragment);
         ft.replace(R.id.content_fragment_layout, fragment);
         ft.commit();
@@ -144,7 +151,7 @@ public class MainPage extends AppCompatActivity
     public void setNav(){
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         //아이콘 클릭하면 네비 열림
-        ImageButton openbtn=findViewById(R.id.open_heart);
+        openbtn=findViewById(R.id.open_heart);
         openbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -165,26 +172,7 @@ public class MainPage extends AppCompatActivity
 
     }
 
-
-
-
     public void setService(){
-        /*
-        Log.d("SetService", "백그라운드 동작");
-        JobScheduler jobScheduler =(JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        jobScheduler.schedule(new JobInfo.Builder(0, new ComponentName(this, GPS_Service.class))
-                .setMinimumLatency(TimeUnit.SECONDS.toSeconds(5)) // 시간 바꿔야함
-                .setOverrideDeadline(TimeUnit.MINUTES.toMillis(3))
-                .build());
-        */
-        /*
-        Log.d("Service", "서비스 시작");
-        Intent intent = new Intent(
-                getApplicationContext(),//현재제어권자
-                LocationService.class); // 이동할 컴포넌트
-        intent.putExtra("phone", user.phone);
-        startService(intent);
-        */
         if(UndeadService.serviceIntent == null){
             foregroundServiceIntent = new Intent(this, UndeadService.class);
             foregroundServiceIntent.putExtra("phoneNum", user.phone);
@@ -195,5 +183,10 @@ public class MainPage extends AppCompatActivity
             foregroundServiceIntent = UndeadService.serviceIntent;
             Log.d("Service", "setService: 서비스 시작2");
         }
+    }
+
+    public void changeButton(boolean isRing){
+        if(isRing)  openbtn.setImageResource(R.drawable.full_heart);
+        else openbtn.setImageResource(R.drawable.empty_heart);
     }
 }

@@ -1,15 +1,22 @@
 package com.example.ncbaicam.cat_alam;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.example.ncbaicam.cat_alam.Item.ResponseBody;
@@ -38,9 +45,11 @@ public class UserLocation implements LocationListener {
     private static long MIN_TIME_UPDATE = 1000 * 10 * 1;
     private static String phoneNumber;
     private int ringing_cnt = 0;
+    private boolean isRing = false, isService = false;
 
-    public UserLocation(Context context, String phoneNumber){
+    public UserLocation(Context context, String phoneNumber, boolean isService){
         mContext = context; this.phoneNumber = phoneNumber;
+        this.isService = isService;
     }
     public void setLocation(){
 
@@ -139,24 +148,30 @@ public class UserLocation implements LocationListener {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if(response.isSuccessful()){
                     double distance = response.body().distance * 1000;
-                    String status = response.body().status;
-                    try{
-                        if(status== "error"){
-                            Log.d("saveDB", "Save Fail");
-                            return;
-                        }
-                    } catch (Exception e){
-                        Log.d("saveDB", "Save Fail");
-                        return;
-                    }
-                    // 단위 : m
-                    //*****3m 안에 들어오면 알림*******
-                    if(distance < 3) {
+                    int status = response.body().status;
+                    ringing_cnt = response.body().ringing_cnt;
+                    if(!isRing && status == 1) {
+                        isRing = true;
                         //정보 저장
                         saveMeet(lat, lng);
-                        Vibrator vibrator = (Vibrator) mContext.getSystemService(mContext.VIBRATOR_SERVICE);
-                        vibrator.vibrate(1000);
+                        // 단위 : m
+                        //*****3m 안에 들어오면 알림*******
+                        if (distance < 10) {
+                            if(isService){
+                                // 푸쉬 알람
+                                setNotification();
+                            }
+                            else{
+                                ((MainPage)mContext).changeButton(true);
+                                Vibrator vibrator = (Vibrator) mContext.getSystemService(mContext.VIBRATOR_SERVICE);
+                                vibrator.vibrate(1000);
+                            }
+                        }
                     }
+                    else if(!isService && status == 0){
+                        ((MainPage)mContext).changeButton(false);
+                    }
+                    isRing = status== 0 ? true : false;
                 }
                 else{
                     Log.d("saveDB", "onResponse: db반환 실패");
@@ -211,8 +226,22 @@ public class UserLocation implements LocationListener {
         return ringing_cnt;
     }
 
-    //상대 알람 울리게 했을 때,
-    //
+    public void setNotification(){
+        NotificationManager notificationManager = (NotificationManager)mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationCompat.Builder notiBuilder = new NotificationCompat.Builder(mContext);
+        Bitmap largeIcon = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.ic_notification);
+        Intent notificationIntent = new Intent(mContext, LogoIntro.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0 , notificationIntent, 0);
+        notiBuilder.setContentTitle("띵동")
+                .setContentInfo("마음이 울림")
+                .setContentText("당신을 좋아하는 사람이 주위를 지나갔습니다.")
+                .setSmallIcon(R.mipmap.ic_notification)
+                .setLargeIcon(largeIcon)
+                .setContentIntent(pendingIntent)
+                .setVibrate(new long[] {1000});
+        Notification notification = notiBuilder.build();
+        notificationManager.notify(2, notification);
+    }
     // TODO: 2019-11-22 여기 백엔드랑 만들어야함.
 
 }

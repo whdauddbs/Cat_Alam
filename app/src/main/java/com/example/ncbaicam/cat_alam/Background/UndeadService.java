@@ -32,7 +32,7 @@ public class UndeadService extends Service {
         
         // 위치 저장 하기
         Log.d("Service", "onStartCommand: 위치 저장 시작");
-        userLocation = new UserLocation(this, intent.getStringExtra("phoneNum"));
+        userLocation = new UserLocation(this, intent.getStringExtra("phoneNum"), true);
         userLocation.setLocation();
         // 거리가 가까워지면 알람울리기, 푸쉬알림
 
@@ -42,10 +42,10 @@ public class UndeadService extends Service {
 
     private void initializeNotification() {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "1");
-        builder.setSmallIcon(R.mipmap.ic_launcher);
+        builder.setSmallIcon(R.mipmap.ic_notification);
 
         NotificationCompat.BigTextStyle style = new NotificationCompat.BigTextStyle();
-        style.bigText("설정을 보려면 누르세요.");
+        style.bigText("클릭하면 화면으로 이동합니다.");
         style.setBigContentTitle(null);
         style.setSummaryText("서비스 동작중");
         double s = 1;

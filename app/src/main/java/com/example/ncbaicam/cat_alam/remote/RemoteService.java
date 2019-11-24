@@ -20,4 +20,7 @@ public interface RemoteService {
 
     @POST("/user/location")
     Call<ResponseBody> insertLocation(@Body UserLocationItem userLocationItem);
+
+    @POST("/user/change/youPhone")
+    Call<String> changeYouPhone(@Body UserInfoItem userInfoItem);
 }
