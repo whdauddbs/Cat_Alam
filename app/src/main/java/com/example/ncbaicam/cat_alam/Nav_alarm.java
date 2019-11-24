@@ -17,6 +17,7 @@ public class Nav_alarm extends Fragment {
     View v;
     ImageView alarm_img;
     TextView alarm;
+    public int alarm_cnt = 0;
 
     @Nullable
     @Override
@@ -34,7 +35,6 @@ public class Nav_alarm extends Fragment {
         SharedPreferences sharedPreferences =this.getActivity().getSharedPreferences("Alarm", Context.MODE_PRIVATE);
         String salarm = sharedPreferences.getString("alarm","0");
         alarm.setText("좋아하는 사람에게 "+salarm+"번 알람을 울렸습니다.");
-
 
         //이미지 설정
         int cnt_alarm = Integer.parseInt(String.valueOf(alarm.getText()));
